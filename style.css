@@ -1,0 +1,26 @@
+/* place image as background */
+slides>slide.title-slide {
+    background-image: url('cover-2.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* change heading color */
+.title-slide hgroup h1 {
+    font-size: 65px;
+    line-height: 1.4;
+    letter-spacing: -3px;
+    color: #ffffff;
+  }
+  
+/* outlined text class*/
+.outlined{
+  -webkit-text-stroke: 0.7px black; 
+  -webkit-text-fill-color: #EEEEEE; 
+}
+
+/* place two plots with images side by side  */
+.row{display: flex;}
+.column{flex: 50%; border-radius: 25%} 
+  

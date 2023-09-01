@@ -1,0 +1,10 @@
+﻿Player,Shot_Side,Shot_Type,X,Y,Serve_Speed
+Player2,FH,1st Serve,-4.1,6.4,180
+Player2,FH,2nd Serve,0,6.4,180
+Player2,FH,2nd Serve,4.1,6.4,180
+Player2,FH,2nd Serve,-4.1,-6.4,180
+Player2,FH,2nd Serve,0,0,180
+Player2,FH,2nd Serve,4.1,-6.4,180
+Player2,FH,2nd Serve,0,-11.88,180
+Player2,FH,2nd Serve,0,11.88,180
+

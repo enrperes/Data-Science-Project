@@ -1,0 +1,477 @@
+---
+title: "Nadal vs Djokovic" 
+author: "Enrico Peressin"
+date: "Settembre 2023"
+output:
+  ioslides_presentation:
+    widescreen: true
+    transition: faster
+    css: style.css
+  beamer_presentation: default
+  slidy_presentation: default
+subtitle: Roland Garros 2022
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, fig.width = 5, fig.height = 5) # hides code chunks by default. Use echo = TRUE to show. 
+```
+
+```{r libraries, include=FALSE}
+## Libraries ## ----
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(png)
+library(ggpubr)
+library(cowplot)
+library(gridExtra)
+library(magick)
+```
+
+```{r data, cache=FALSE}
+## IMPORT ## ----
+data <- read.csv("2022RG_final.csv") 
+court_test = read.csv("courtdimensions.csv") # test dataset to calibrate the court image
+# half_court = readPNG("half-clay-court.png")
+half_court = image_read("half-clay-court.png")
+half_court_180 = image_flip(half_court)
+half_court_long = image_read("half-clay-court-long.png")
+half_court_long_180 = image_flip(half_court_long)
+full_court = image_read("full-clay-court.png")
+full_court_90 = image_rotate(full_court, 90)
+full_court_90_BW = image_rotate(image_read("full-clay-court-b.png"), 90)
+# full_court_90_BW = image_modulate(full_court_90, saturation = 0, brightness = 40)
+
+## DATA ## ----
+serves_djoko <- data %>%
+  filter(Player == "Player1" & Shot_Type %in% c("1st Serve", "2nd Serve")) %>%
+  filter(Y2 > -6.4 & Y2 < 6.4 & (Y2 < -1 | Y2 > 1) & (X2 < 4.1 | X2 < -4.1)) %>% # filter out faults
+  select(Player, Shot_Type, X2, Y2) %>%
+  mutate(X2 = ifelse(Y2 < 0, -X2, X2))
+
+serves_nadal <- data %>%
+  filter(Player == "Player2" & Shot_Type %in% c("1st Serve", "2nd Serve")) %>%
+  filter(Y2 > -6.4 & Y2 < 6.4 & (Y2 < -1 | Y2 > 1) & (X2 < 4.1 | X2 > -4.1)) %>%
+  select(Player, Shot_Side, Shot_Type, X2, Y2, Serve_Speed) %>%
+  mutate(X2 = ifelse(Y2 < 0, -X2, X2))
+
+
+```
+
+## L'incontro
+
+Roland Garros, 31 maggio 2022. Questo è il cinquantanovesimo incontro tra i due nel circuito professionale. Il serbo è in vantaggio per 30 a 28 incontri vinti, ma lo spagnolo lo supera 4 a 1 negli ultimi incontri su terra rossa.
+
+Analizziamo questo match, durato 4 ore e 12 minuti, che ha visto di nuovo vincitore *"The king of clay"* con un punteggio di 6-2, 4-6, 6-2, 7-6(4).
+
+## Serve bounce position
+
+```{r court calibration, eval=FALSE}
+## Court Calibration ## ----
+test_Hcourt_plot = ggplot(court_test, aes(x=X2, y=Y2))+
+  geom_point() + 
+  theme_void()+
+  theme(aspect.ratio = 1) +
+  xlim(c(-6, 6)) +
+  ylim(c(-12, 0))
+
+# ggdraw()+
+#   draw_image(half_court, scale = 1)+
+#   draw_plot(test_Hcourt_plot, x=0, y=-0.06, scale=0.85)
+```
+
+[**First**]{.outlined} and [**second**]{style="color:#030303;"} serve placement density map
+
+::: row
+::: column
+```{r Nadal Serve, eval=TRUE, cache=TRUE}
+## Nadal Serve Plot ## ----
+nadal_serve_pos_plot <- ggplot(serves_nadal, aes(x = X2, y = abs(Y2))) +
+  stat_density_2d(aes(fill = after_stat(density)),
+    geom = "raster",
+    contour = FALSE,
+    h = c(1, 2) # control x and y bandwidths of the estimate.
+  ) +
+  scale_fill_gradientn(colors = c(
+    "transparent", # scale that is transparent on the smallest end of the range
+    viridis::viridis_pal(
+      alpha = 0.5,
+      option = "turbo"
+    )(10) # number of colors in the scale
+  )) +
+  geom_point(
+    aes(colour = factor(Shot_Type))
+  ) +
+  scale_colour_manual(values = c("1st Serve" = "#FFFFFFAA", "2nd Serve" = "#000000AA"))+
+  theme_void() +
+  theme(aspect.ratio = 1, legend.position = "none") +
+  xlim(c(-6, 6)) +
+  ylim(c(0, 12)) +
+  ggtitle("Nadal") +
+  theme(plot.title = element_text(hjust = .5,
+                                  vjust = -7,
+                                  face = "bold",
+                                  family = "mono",
+                                  size = 16, 
+                                  color = "#37230e")
+        )
+
+ # plot1 = ggdraw()+
+        ggdraw()+
+        draw_image(half_court, scale = 1.25)+
+        #draw_plot(djoko_serve_pos_plot, x=0, y=-0.05, scale=0.9)
+        draw_plot(nadal_serve_pos_plot, x=0, y=-0.04, scale=1.17)
+```
+:::
+
+::: column
+```{r Djokovic serve, eval=TRUE, cache=FALSE}
+## Djokovic Serve plot ## ----
+djoko_serve_pos_plot <- ggplot(serves_djoko, aes(x = X2, y = abs(Y2))) +
+  stat_density_2d(aes(fill = after_stat(density)),
+    geom = "raster",
+    contour = FALSE,
+    h = c(1, 2)
+  ) +
+  scale_fill_gradientn(colors = c(
+    "transparent",
+    viridis::viridis_pal(
+      alpha = 0.5,
+      option = "turbo"
+    )(10)
+  )) +
+  geom_point(
+    aes(colour = factor(Shot_Type))
+  ) +
+  scale_colour_manual(values = c("1st Serve" = "#FFFFFFAA", "2nd Serve" = "#000000AA"))+
+  theme_void() +
+  theme(aspect.ratio = 1, legend.position = "none") +
+  xlim(c(-6, 6)) +
+  ylim(c(0, 12)) +
+  ggtitle("Djokovic") +
+  theme(plot.title = element_text(hjust = .5, 
+                                  vjust = -7,
+                                  face = "bold",
+                                  family = "mono",
+                                  size = 16,
+                                  color = "#37230e")
+        )
+
+# plot2 = ggdraw()+
+          ggdraw()+
+          draw_image(half_court, scale = 1.25)+
+          # draw_plot(test_Hcourt_plot, x=0, y = -0.08, scale = 1.08)
+          draw_plot(djoko_serve_pos_plot, x=0, y=-0.04, scale=1.15)
+          #draw_plot(nadal_serve_pos_plot, x=0, y=-0.06, scale=0.85)
+         
+```
+:::
+:::
+
+```{r, eval=FALSE, fig.height=5, fig.width=5, fig.align='left'}
+# grid.arrange(plot1, plot2, ncol=2)
+# plot_grid(plot1, plot2,
+#           ncol=2, nrow = 1
+#           )
+ggarrange(plot1, plot2, ncols = 2)
+# aligned_plots = align_plots(plot1, plot2, align = "h")
+```
+
+## [First]{style="color:#4E80DB;"} and [second]{style="color:#DAB157;"} serve speeds
+
+```{r serve speed Nadal, eval=TRUE, cache=FALSE}
+serve_speed_nadal <- data %>% 
+  filter(Player == "Player2" & Shot_Type %in% c("1st Serve", "2nd Serve")) %>% 
+  select(Serve_Speed, Set, Shot_Type, Point_Winner, Stroke_Number, Outcome) %>% 
+  mutate(isAce = ifelse((Point_Winner == 2) & Stroke_Number == 1 & Outcome == "Winner", TRUE, FALSE)) %>% 
+  filter(Serve_Speed != "Unknown")
+
+mean_nadal_serve_speed <- serve_speed_nadal %>% # new dataframe with mean serve speed for each combination of Set and Shot_Type
+  group_by(Shot_Type, Set) %>% 
+  summarise(mean_serve_speed = round(mean(as.numeric(Serve_Speed))),
+            .groups = "drop") # Remove the grouping
+
+pp1 = ggdraw()+
+  draw_plot(
+    nadal_serve_speed_plot <- ggplot(serve_speed_nadal, 
+                                 aes(x = as.numeric(Serve_Speed),
+                                     y = reorder(Set, desc(Set)))
+                                 )+
+    geom_point(
+      # size = 3, 
+      aes(
+      colour = ifelse(isAce, "red", ifelse(Shot_Type == "1st Serve", "blue", "yellow")),  # not actual colors, but it works (somehow)
+      shape = factor(isAce),
+      size = factor(isAce)), 
+    position = position_jitter(height = 0.14), 
+    na.rm = TRUE # missing values are removed without warning
+  ) +
+  geom_text(
+    data = mean_nadal_serve_speed, 
+    aes(label= mean_serve_speed, x = mean_serve_speed), 
+    vjust = 3.5,
+    size = 2.5
+  )+
+  stat_summary(
+    na.rm = TRUE,
+    fun = mean,
+    aes(group = interaction(Set, Shot_Type)),  # Group by Set and Shot_Type
+    shape = "|",
+    colour = "#000B1CB5",
+    size = 2.14,
+    show.legend = TRUE
+  )+
+  labs(
+    title = "Nadal", 
+    x = NULL,
+    y = "Set"
+  )+
+  # scale_color_manual(values = c("1st Serve"="#4E80DB", "2nd Serve" = "#DAB157"))+
+  scale_color_manual(values= c("#4E80DB", "#da6c5bAA", "#DAB157"))+
+  scale_fill_manual(values = c("FALSE" = "#4E80DB", "TRUE" ="red"))+
+  scale_size_manual(values = c("FALSE" = 3, "TRUE" = 4.5))+
+  scale_shape_manual(values = c("FALSE" = 20, "TRUE" = 18))+
+  theme_minimal()+
+  scale_x_continuous(breaks = c(125, 150, 175, 200))+
+  guides(color = FALSE, shape = FALSE, size = FALSE)+
+  theme(
+    plot.title = element_text(hjust = 0.5,
+                              face = "bold",
+                              family = "mono",
+                              size = 16)
+  )
+)
+
+```
+
+```{r Serve speed Djoko, eval=TRUE, cache=FALSE}
+serve_speed_djoko <- data %>% 
+  filter(Player == "Player1" & Shot_Type %in% c("1st Serve", "2nd Serve")) %>% 
+  select(Serve_Speed, Set, Shot_Type, Point_Winner, Stroke_Number, Outcome) %>% 
+  mutate(isAce = ifelse((Point_Winner == 1) & Stroke_Number == 1 & Outcome == "Winner", TRUE, FALSE)) %>% 
+  filter(Serve_Speed != "Unknown")
+
+mean_djoko_serve_speed <- serve_speed_djoko %>% 
+  group_by(Shot_Type, Set) %>% 
+  summarise(mean_serve_speed = round(mean(as.numeric(Serve_Speed))),
+            .groups = "drop")
+
+pp2 = ggdraw()+
+  draw_plot(
+djoko_serve_speed_plot <- ggplot(serve_speed_djoko,
+                                 aes(x = as.numeric(Serve_Speed),
+                                     y = reorder(Set, desc(Set))))+
+  geom_point(
+    # size = 3, 
+    aes(
+      # colour = factor(isAce), 
+      colour = ifelse(isAce, "red", ifelse(Shot_Type == "1st Serve", "blue", "yellow")),  
+      shape = factor(isAce),
+      size = factor(isAce)), 
+    position = position_jitter(height = 0.14), 
+    na.rm = TRUE 
+  ) + 
+  geom_text(
+    data = mean_djoko_serve_speed, 
+    aes(label= mean_serve_speed, x = mean_serve_speed), 
+    vjust = 3.5,
+    size = 2.5
+  )+
+  stat_summary(
+    na.rm = TRUE,
+    fun = mean,
+    aes(group = interaction(Set, Shot_Type)),  # Group by Set and Shot_Type
+    shape = "|",
+    colour = "#000B1CB5",
+    size = 2.14,
+    show.legend = TRUE
+  )+
+  labs(
+    title = "Djokovic",
+    colour = "Shot Type",
+    # x = "Serve speed (Km/h)",
+    x = NULL,
+    y = NULL
+  )+
+  scale_color_manual(values= c("#4E80DB", "#da6c5bCC", "#DAB157"))+
+  scale_shape_manual(values = c("FALSE" = 20, "TRUE" = 18))+
+  scale_size_manual(values = c("FALSE" = 3, "TRUE" = 4.5))+
+  theme_minimal()+
+  scale_x_continuous(breaks = c(125, 150, 175, 200))+
+  guides( shape = FALSE, size = FALSE)+
+  theme(
+    plot.title = element_text(hjust = 0.5,
+                              face = "bold",
+                              family = "mono",
+                              size = 16),
+    legend.position = "bottom"
+  )
+)
+
+```
+
+```{r plot grid speed, fig.height=5.5, fig.width=10}
+ # plot_grid(pp1, pp2)
+text_label = "Serve speed (Km/h)"
+dot_label = "◆ = Ace"
+
+# grid.arrange(pp1, pp2, ncol = 2, bottom = text_grob(
+#   label = paste(text_label, dot_label, sep = "\n"),
+#   x =  0.5, hjust = 0.5, color = "#da6c5bCC")
+  
+  grid.arrange(pp1, pp2, ncol = 2)
+
+# grid.arrange(pp1, pp2, ncol = 2, bottom = text_grob("Serve speed (Km/h)",
+#                                                     hjust = 1, 
+#                                                     x = 0.6)
+# )
+```
+
+## Strikepoint density map
+
+```{r strikepoint Nadal, eval=FALSE, warning=FALSE}
+# divisions = c(-6, -3.6, -1.2, 1.2, 3.6, 6)
+divisions = c(-7.5, -4.5, -1.5, 1.5, 4.5, 7.5)
+divisions2 = c(-7.5, -4.5, -1.5, 1.5, 4.5)
+
+strikepoint_nadal <- data %>% 
+  # filter(Player == "Player2" & !(Shot_Type %in% c("1st Serve", "2nd Serve")) & abs(Y)>7.5) %>%
+  filter(Player == "Player2" & Stroke_Number > 2 & abs(Y)>7.5 & !(Shot_Type %in% c("1st Serve", "2nd Serve"))) %>%
+  select(Player, X, Y, Outcome, Shot_Type, Shot_Side) %>% 
+  mutate(X = ifelse(Y < 0, X, -X)) 
+
+control_row <- data.frame(
+  X = c(-5.48, -4.11, 0, 4.11, 5.48),
+  Y = c(-11.88, -11.88, -11.88, -11.88, -11.88),
+  Player = c("Player2", "Player2", "Player2", "Player2", "Player2"),
+  Outcome = c("1", "2", "3", "4", "5"),
+  Shot_Type = c("1", "2", "3", "4", "5"),
+  Shot_Side = c("1", "2", "3", "4", "5")
+)
+
+testbind <- rbind(strikepoint_nadal, control_row)
+
+strikepoint_nadal_avg <- strikepoint_nadal %>% 
+  mutate(section = cut(X, breaks = divisions)) %>% 
+  count(section) %>% 
+  mutate(percentage = n / sum(n)*100)
+
+
+
+strikeplot = ggplot(testrow, aes(x = X, y = -abs(Y)))+
+  geom_point(
+    aes(colour = Shot_Side)
+  )+ 
+  theme_void()+
+  theme(
+    # lenged.box.background = element_rect(colour = "red"),
+    aspect.ratio = 1.33,
+    legend.position = "bottom",
+    # legend.position = c(.5, 0),
+    legend.box = "horizontal"
+  )+
+  labs(
+    colour = "", 
+    x = 2
+  )+
+  xlim(c(-8, 8)) +
+  ylim(c(-16, 0)) +
+  geom_vline(
+    xintercept = divisions, linetype = 5,  color = "#111111AA"
+  )+
+  geom_text(
+    data = strikepoint_nadal_avg,
+    aes(x = divisions2 + 1.5, y = -6.6, label=paste0(round(percentage, 1), "%")), size = 4, colour = "#111111"
+  )+
+  scale_color_manual(values = c("FH" = "#1D4285AA", "BH" = "#942818AA"), labels = c("Backhand", "Forehand"))+
+  ggtitle("Nadal strikepoint") +
+  theme(plot.title = element_text(hjust = .5,
+                                  vjust = -40,
+                                  face = "bold",
+                                  family = "mono",
+                                  size = 16,
+                                  color = "#222222"))
+
+
+
+ggdraw()+
+  draw_image(half_court_long_180, scale = 1)+
+  draw_plot(strikeplot, x = 0, y = .13, scale = 1.25) #perfect dimensions
+  # draw_plot(test_Hcourt_plot, x = 0, y = .17, scale = .64)
+
+```
+
+## Novak backhand
+
+
+
+```{r Djokovic Bakhand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+
+djoko_backhand <- data %>% 
+  filter(Player == "Player1" & Shot_Side == "BH" & Stroke_Number>2  & !(Shot_Type %in% c("Volley", "Swing-volley", "Drop-Shot", "Drop-volley", "Overhead", "Lob Volley")) & X<0 & Point < 500) %>% 
+  select(X, Y, X2, Y2, Outcome, Shot_Type, Point_Winner) %>% 
+  mutate(X = ifelse(Y > 0, -X, X),
+         X2 = ifelse(Y2 > 0, -X2, X2))
+
+ djoko_backhand_plot <- ggplot(djoko_backhand)+
+    geom_segment(aes(x = -abs(Y),
+                     y = X, 
+                     xend = abs(Y2), 
+                     yend = X2, 
+                     color = Outcome,
+                     size = Outcome), 
+                 arrow = arrow(length = unit(0.4, "cm"), ends = "last"))+
+    scale_color_manual(
+      values = c(
+        "In-Play" = "#AAAAAA33",
+        "Unforced-Error" = "#DB2F18A0",
+        "Forced-Error" = "#FF8C0088",
+        "Winner" = "#239CCCAA"),
+      guide = guide_legend(
+        title = "",
+        reverse = TRUE,
+        direction = "vertical"
+      )
+    )+
+   scale_size_manual(
+     values = c(
+       "In-Play" = 0.8,
+       "Unforced-Error" = 1.1,
+       "Forced-Error" = 1.1,
+       "Winner" = 1.2
+     ),
+     guide = "none"
+   )+
+   # geom_point( data = court_test, aes(x = Y, y = X) )+
+    xlim(-16, 16)+
+    ylim(8, -8)+
+    theme_void()+
+    theme(
+      aspect.ratio = .5,
+      legend.position = c(.12, .17),
+      legend.text = element_text(color = "#ffffff")
+    )
+
+ggdraw()+
+  draw_image(full_court_90_BW, scale = 1)+
+  draw_plot(djoko_backhand_plot, x = 0, y = 0, scale = 1.15)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
