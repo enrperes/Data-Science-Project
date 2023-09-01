@@ -871,7 +871,7 @@ ggdraw()+
 
 ```{r Djokovic Slice, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
 
- djoko_forehand_plot <- ggplot(djoko_slice_v2)+
+ djoko_forehand_plot <- ggplot(djoko_slice)+
     geom_segment(aes(x = -abs(Y),
                      y = X, 
                      xend = abs(Y2), 
