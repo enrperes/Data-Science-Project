@@ -12,10 +12,10 @@ Nadal's forehand dominance, Djokovic's backhand deficiency, baseline strategy, 2
 
 ## Files
 
-- 2022RG_final.csv : main dataset
+- `2022RG_final.csv` : main dataset
     - [The data was collected by hand](https://github.com/glad94/Djokovic-Nadal_RG2022_Data/blob/main/events.csv). Credits to [Gerald Lim](https://glad94.github.io/)
-- Presentation.html : main presentation of the project
-- Presentation.Rmd : R markdown file of the presentation
-- style.css : css file for the presentation
-- .afdesign and .afphoto files : source files for the tennis court drawings
-- .png files : images used in the presentation
+- `Presentation.html` : main presentation of the project
+- `Presentation.Rmd` : R markdown file of the presentation
+- `style.css` : css file for the presentation
+- `.afdesign` and `.afphoto` files : source files for the tennis court drawings
+- `.png` files : images used in the presentation
