@@ -1,5 +1,6 @@
 # Roland Garros 2022: Novak Djokovic vs Rafael Nadal match analysis
 
+![Cover image](/cover.jpg)
 ## University project. Course: Data Science (UniUD)
 
 ## Description
