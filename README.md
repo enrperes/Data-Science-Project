@@ -1,7 +1,6 @@
 # Roland Garros 2022: Novak Djokovic vs Rafael Nadal match analysis
 
 ![Cover image](/cover.jpg)
-## University project. Course: Data Science (UniUD)
 
 ## Description
 
@@ -19,3 +18,5 @@ Nadal's forehand dominance, Djokovic's backhand deficiency, baseline strategy, 2
 - `style.css` : css file for the presentation
 - `.afdesign` and `.afphoto` files : source files for the tennis court drawings
 - `.png` files : images used in the presentation
+
+## University project. Course: Data Science (UniUD)
