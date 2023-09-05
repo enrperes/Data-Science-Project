@@ -221,12 +221,20 @@ djoko_slice <- data %>%
   mutate(X = ifelse(Y > 0, -X, X),
          X2 = ifelse(Y2 > 0, -X2, X2))
 ds_count <- table(djoko_slice$Outcome)
+
+djoko_slice_outcome <- djoko_slice %>% 
+  group_by(Point)
 ```
 
 
 ## L'incontro
 
-[---]
+Il 59° incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di 6-2 4-6 6-2 7-6(4). Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in forma è ancora più spettacolare.  
+
+
+### Il dataset
+
+I dati sono stati registrati [manualmente](https://fcpythonvideocoder.netlify.app/) e includono informazioni sulla posizione della pallina e dei giocatori, sul tipo di colpo, velocità della palla e punteggio. 
 
 ## Serve bounce position
 ```{r court calibration, eval=FALSE}
@@ -704,7 +712,7 @@ ggdraw()+
   draw_plot(djoko_forehand_plot, x = 0, y = 0, scale = 1.15)
 ```
 
-## Nadal forehand groundstrokes
+## Nadal inside in & out forehand groundstrokes
 
 ```{r Nadal Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
 
@@ -759,7 +767,7 @@ ggdraw()+
   draw_plot(nadal_forehand_plot, x = 0, y = 0, scale = 1.15)
 ```
 
-## Nadal 
+## Nadal inside in forehand groundstrokes
 
 ```{r Nadal Forehand inside-in, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
 
@@ -800,7 +808,7 @@ ggdraw()+
     theme_void()+
     theme(
       aspect.ratio = .5,
-      legend.position = c(.13, .9), 
+      legend.position = c(.13, .88), 
       legend.text = element_text(color = "#ffffff"),
       legend.background = element_rect(
         fill = "#242424EE", colour = "#242424EE"
@@ -812,7 +820,7 @@ ggdraw()+
   draw_plot(nadal_forehand_plot, x = 0, y = 0, scale = 1.15)
 ```
 
-## Djokovic is out of touch
+## Djokovic is out of touch: drop-shot
 
 ```{r Djokovic DropShot, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
 
@@ -867,9 +875,10 @@ ggdraw()+
   draw_plot(djoko_forehand_plot, x = 0, y = 0, scale = 1.15)
 ```
 
-## Djokovic is out of touch 
-
+## Djokovic is out of touch: slice
 ```{r Djokovic Slice, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+
+ds_count_2 = c("Forced error","Lead to lost point","Unforced-Error","Winner")
 
  djoko_forehand_plot <- ggplot(djoko_slice)+
     geom_segment(aes(x = -abs(Y),
@@ -881,11 +890,12 @@ ggdraw()+
                  arrow = arrow(length = unit(0.4, "cm"), ends = "last"))+
     scale_color_manual(
       values = c(
-        "In-Play" = "#AAAAAA33",
+        "In-Play" = "#A143438E",
         "Unforced-Error" = "#DB2F18A0",
         "Forced-Error" = "#FF8C0088",
         "Winner" = "#239CCCAA"),
-      labels = paste0(names(ds_count), "  (", ds_count, ")"),
+      # labels = paste0(names(ds_count), "  (", ds_count, ")"),
+      labels = paste0(ds_count_2, "  (", ds_count, ")"),
       guide = guide_legend(
         title = "",
         reverse = TRUE,
@@ -910,7 +920,7 @@ ggdraw()+
     theme_void()+
     theme(
       aspect.ratio = .5,
-      legend.position = c(.13, .9),
+      legend.position = c(.13, .85),
       legend.text = element_text(color = "#ffffff"),
       legend.background = element_rect(
         fill = "#242424EE", colour = "#242424EE"
