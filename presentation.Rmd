@@ -227,20 +227,38 @@ djoko_slice_outcome <- djoko_slice %>%
 
 # Pressure
 
-djoko_pressure <- data %>% 
-  filter(Player == "Player1" & (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40))) %>% 
+djoko_pressure_all <- data %>% 
+  filter(Player == "Player1" & 
+           (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40)) & 
+           !(Shot_Type %in% c("1st Serve", "2nd Serve"))) %>% 
   select(Point, Player, Outcome, Player1_Score, Player2_Score, BP, SP, Tiebreak)
-dp_count <- table(djoko_pressure$Outcome)
 
-nadal_pressure <- data %>% 
-  filter(Player =="Player2" & (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40))) %>% 
+djoko_pressure <- djoko_pressure_all %>% 
+  filter(!(Outcome == "In-Play"))
+
+dp_count <- table(djoko_pressure$Outcome)
+dp_count_all <- table(djoko_pressure_all$Outcome)
+In_Play_dp = dp_count_all["In-Play"]
+
+nadal_pressure_all <- data %>% 
+  filter(Player =="Player2" & 
+           (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40)) &
+           !(Shot_Type %in% c("1st Serve", "2nd Serve"))) %>% 
   select(Point, Player, Outcome, Player1_Score, Player2_Score, BP, SP, Tiebreak)
+
+nadal_pressure <- nadal_pressure_all %>% 
+  filter(!(Outcome == "In-Play"))
+
+np_count <- table(nadal_pressure$Outcome)
+np_count_all <- table(nadal_pressure_all$Outcome)
+In_Play_np = np_count_all["In-Play"]
+  
 ```
 
 
 ## L'incontro
 
-Il **59°** incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di **6-2 4-6 6-2 7-6(4)**. Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in grande forma è ancora più spettacolare.  
+Il **59°** incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di **6-2, 4-6,  6-2,  7-6(4)**. Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in grande forma è ancora più spettacolare.  
 
 - Come ha fatto Nadal a vincere questa partita?
 - Quali sono state le strategie vincenti? 
@@ -304,7 +322,7 @@ nadal_serve_pos_plot <- ggplot(serves_nadal, aes(x = X2, y = abs(Y2))) +
         )
 first_serve_nadal_percentage_grob = grobTree(textGrob(
   paste("First serve %: ", paste0(round(first_serve_nadal_percentage, 1), "%")),
-  x = .5, y = .8,gp=gpar(fontfamily="mono", fontsize = 15)))
+  x = .5, y = .8,gp=gpar( fontsize = 15)))
 
 ggdraw()+
   draw_image(half_court, scale = 1.25)+
@@ -345,7 +363,7 @@ djoko_serve_pos_plot <- ggplot(serves_djoko, aes(x = X2, y = abs(Y2))) +
         )
 first_serve_djoko_percentage_grob = grobTree(textGrob(
   paste("First serve %: ", paste0(round(first_serve_djoko_percentage, 1), "%")),
-  x = .5, y = .8, gp=gpar(fontfamily="mono", fontsize = 15)))
+  x = .5, y = .8, gp=gpar( fontsize = 15)))
 
 ggdraw()+
   draw_image(half_court, scale = 1.25)+
@@ -484,7 +502,7 @@ grid.arrange(pp1, pp2, ncol = 2, bottom = text_grob(
 
 <div class = "row">
 <div class = "column">
-```{r strikepoint Nadal, eval=TRUE, warning=FALSE}
+```{r strikepoint Nadal, eval=TRUE, warning=FALSE, cache=TRUE}
 strikeplot = ggplot(strikepoint_nadal, aes(x = X, y = -abs(Y)))+
   geom_point(
     aes(colour = Shot_Side)
@@ -524,7 +542,7 @@ ggdraw()+
 ```
 </div>
 <div class = "column">
-```{r strikepoint Djokovic, eval=TRUE, warning=FALSE}
+```{r strikepoint Djokovic, eval=TRUE, warning=FALSE, cache=TRUE}
 strikeplot = ggplot(strikepoint_djokovic, aes(x = X, y = -abs(Y)))+
   geom_point(
     aes(colour = Shot_Side)
@@ -568,7 +586,7 @@ ggdraw()+
 
 ## Djokovic backhand groundstrokes
 
-```{r Djokovic Bakhand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Djokovic Bakhand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  djoko_backhand_plot <- ggplot(djoko_backhand)+
     geom_segment(aes(x = -abs(Y),
@@ -621,7 +639,7 @@ ggdraw()+
 
 ## Nadal backhand groundstrokes
 
-```{r Nadal Bakhand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Nadal Bakhand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  nadal_backhand_plot <- ggplot(nadal_backhand)+
     geom_segment(aes(x = -abs(Y),
@@ -676,7 +694,7 @@ ggdraw()+
 
 ## Djokovic forehand groundstrokes
 
-```{r Djokovic Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Djokovic Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  djoko_forehand_plot <- ggplot(djoko_forehand)+
     geom_segment(aes(x = -abs(Y),
@@ -731,7 +749,7 @@ ggdraw()+
 
 ## Nadal inside in & out forehand groundstrokes
 
-```{r Nadal Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Nadal Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  nadal_forehand_plot <- ggplot(nadal_forehand)+
     geom_segment(aes(x = -abs(Y),
@@ -786,7 +804,7 @@ ggdraw()+
 
 ## Nadal inside in forehand groundstrokes
 
-```{r Nadal Forehand inside-in, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Nadal Forehand inside-in, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  nadal_forehand_plot <- ggplot(nadal_forehand_insidein)+
     geom_segment(aes(x = -abs(Y),
@@ -839,7 +857,7 @@ ggdraw()+
 
 ## Djokovic is out of touch: drop-shot
 
-```{r Djokovic DropShot, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Djokovic DropShot, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
  djoko_forehand_plot <- ggplot(djoko_dropshot)+
     geom_segment(aes(x = -abs(Y),
@@ -893,7 +911,7 @@ ggdraw()+
 ```
 
 ## Djokovic is out of touch: slice
-```{r Djokovic Slice, eval=TRUE, fig.height=5, fig.width=10, fig.align='left'}
+```{r Djokovic Slice, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
 
 ds_count_2 = c("Forced error","Lead to lost point","Unforced-Error","Winner")
 
@@ -951,28 +969,69 @@ ggdraw()+
 
 
 ## Under pressure
-```{r pressure}
+<span class = "slidetext"> Set points, Break points, Deuce points </span>
+<div class = "row">
+<div class = "column">
+```{r pressure Nadal, eval=TRUE}
 
-ggplot(djoko_pressure) +
-  geom_bar(aes(x = Outcome),
-            colour = Outcome) +
-  labs(title = "Outcome vs. Number of Shots",
-       x = "Outcome",
-       y = "Number of Shots") +
-  theme_minimal()+
-  scale_color_manual(
-      values = c(
-        "In-Play" = "#A143438E",
+nadal_pressure_data <- data.frame(Outcome = names(np_count), Count = as.numeric(np_count)) 
+
+# ggplot(nadal_pressure_data, aes(x = reorder(Outcome, desc(np_count)), y = Count, fill= Outcome))+
+ggplot(nadal_pressure_data, aes(x = Outcome, y = Count, fill= Outcome))+
+  geom_bar(stat = "identity", position = position_dodge())+
+  # scale_y_log10()+
+  ylim(0,20)+
+  geom_text(aes(label = np_count), vjust = 2.5, position = position_dodge(), size = 3.5)+
+  scale_fill_manual(values = c(
+        "In-Play" = "#AAAAAABB",
         "Unforced-Error" = "#DB2F18A0",
         "Forced-Error" = "#FF8C0088",
-        "Winner" = "#239CCCAA"))
+        "Winner" = "#239CCCAA"), 
+         guide = "none",
+         labels = paste0(np_count, "  (", np_count, ")"))+
+      labs(title = "Nadal", 
+       x = NULL,
+       y = "Count")+
+  theme_minimal()+
+  coord_cartesian(clip = "off")+
+  annotate("text", x = 2, y = 0, vjust = 5.5, label = paste("In-Play shots:", In_Play_np))+
+theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", size = 16), plot.margin = unit(c(0.1, 0.1, 0.4, 0.1), "inches"))
+
 
 
 ```
+</div>
+<div class = "column">
+```{r pressure Djokovic, eval=TRUE}
+
+djoko_pressure_data <- data.frame(Outcome = names(dp_count), Count = as.numeric(dp_count)) 
+
+# ggplot(djoko_pressure_data, aes(x = reorder(Outcome, desc(dp_count)), y = Count, fill= Outcome))+
+ggplot(djoko_pressure_data, aes(x = Outcome, y = Count, fill= Outcome))+
+  geom_bar(stat = "identity", position = position_dodge())+
+  # scale_y_log10()+
+  ylim(0,20)+
+  geom_text(aes(label = dp_count), vjust =2.5, position = position_dodge(0.9), size = 3.5)+
+  # geom_text("hello")+
+  scale_fill_manual(values = c(
+        "In-Play" = "#AAAAAABB",
+        "Unforced-Error" = "#DB2F18A0",
+        "Forced-Error" = "#FF8C0088",
+        "Winner" = "#239CCCAA"), 
+         guide = "none",
+         labels = paste0(dp_count, "  (", dp_count, ")"))+
+      labs(title = "Djokovic", 
+       x = NULL,
+       y = NULL)+
+  coord_cartesian(clip = "off")+
+  theme_minimal()+
+annotate("text", x = 2, y = 0, vjust = 5.5, label = paste("In-Play shots:", In_Play_dp))+
+theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", size = 16), plot.margin = unit(c(0.1, 0.1, 0.4, 0.1), "inches"))
 
 
-
-
+```
+</div>
+</div>
 
 
 

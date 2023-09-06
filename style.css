@@ -23,4 +23,10 @@ slides>slide.title-slide {
 /* place two plots with images side by side  */
 .row{display: flex;}
 .column{flex: 50%; border-radius: 25%} 
+
+.slidetext{
+  position: relative;
+  top: -35px;
+  
+}
   
