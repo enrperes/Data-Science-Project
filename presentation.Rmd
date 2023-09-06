@@ -1,5 +1,5 @@
 ---
-title: "Nadal vs Djokovic" 
+title: "Rafael Nadal vs Novak Djokovic" 
 author: "Enrico Peressin"
 date: "Settembre 2023"
 output:
@@ -224,17 +224,34 @@ ds_count <- table(djoko_slice$Outcome)
 
 djoko_slice_outcome <- djoko_slice %>% 
   group_by(Point)
+
+# Pressure
+
+djoko_pressure <- data %>% 
+  filter(Player == "Player1" & (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40))) %>% 
+  select(Point, Player, Outcome, Player1_Score, Player2_Score, BP, SP, Tiebreak)
+dp_count <- table(djoko_pressure$Outcome)
+
+nadal_pressure <- data %>% 
+  filter(Player =="Player2" & (BP == 1 | SP == 1 | Tiebreak == 1 | (as.numeric(Player1_Score) == 40 & as.numeric(Player2_Score) == 40))) %>% 
+  select(Point, Player, Outcome, Player1_Score, Player2_Score, BP, SP, Tiebreak)
 ```
 
 
 ## L'incontro
 
-Il 59° incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di 6-2 4-6 6-2 7-6(4). Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in forma è ancora più spettacolare.  
+Il **59°** incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di **6-2 4-6 6-2 7-6(4)**. Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in grande forma è ancora più spettacolare.  
+
+- Come ha fatto Nadal a vincere questa partita?
+- Quali sono state le strategie vincenti? 
+- Cosa ha sbagliato Djokovic? 
 
 
-### Il dataset
+
+### **Il dataset**
 
 I dati sono stati registrati [manualmente](https://fcpythonvideocoder.netlify.app/) e includono informazioni sulla posizione della pallina e dei giocatori, sul tipo di colpo, velocità della palla e punteggio. 
+Crediti:  [Gerald Lim](https://glad94.github.io/)
 
 ## Serve bounce position
 ```{r court calibration, eval=FALSE}
@@ -863,7 +880,7 @@ ggdraw()+
     theme_void()+
     theme(
       aspect.ratio = .5,
-      legend.position = c(.13, .9),
+      legend.position = c(.13, .88),
       legend.text = element_text(color = "#ffffff"),
       legend.background = element_rect(
         fill = "#242424EE", colour = "#242424EE"
@@ -920,7 +937,7 @@ ds_count_2 = c("Forced error","Lead to lost point","Unforced-Error","Winner")
     theme_void()+
     theme(
       aspect.ratio = .5,
-      legend.position = c(.13, .85),
+      legend.position = c(.137, .85),
       legend.text = element_text(color = "#ffffff"),
       legend.background = element_rect(
         fill = "#242424EE", colour = "#242424EE"
@@ -933,8 +950,25 @@ ggdraw()+
 ```
 
 
+## Under pressure
+```{r pressure}
+
+ggplot(djoko_pressure) +
+  geom_bar(aes(x = Outcome),
+            colour = Outcome) +
+  labs(title = "Outcome vs. Number of Shots",
+       x = "Outcome",
+       y = "Number of Shots") +
+  theme_minimal()+
+  scale_color_manual(
+      values = c(
+        "In-Play" = "#A143438E",
+        "Unforced-Error" = "#DB2F18A0",
+        "Forced-Error" = "#FF8C0088",
+        "Winner" = "#239CCCAA"))
 
 
+```
 
 
 
