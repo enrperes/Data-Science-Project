@@ -206,7 +206,7 @@ nadal_forehand_insidein <- nadal_forehand %>%
 nfh_count <- table(nadal_forehand$Outcome)
 nfhii_count <- table(nadal_forehand_insidein$Outcome)
 
-# Slice
+# Slice ----
 
 djoko_dropshot <- data %>% 
   filter(Player == "Player1" & Shot_Type == "Drop-Shot") %>% 
@@ -225,7 +225,7 @@ ds_count <- table(djoko_slice$Outcome)
 djoko_slice_outcome <- djoko_slice %>% 
   group_by(Point)
 
-# Pressure
+# Pressure ----
 
 djoko_pressure_all <- data %>% 
   filter(Player == "Player1" & 
