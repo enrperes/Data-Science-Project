@@ -92,7 +92,7 @@ mean_djoko_serve_speed <- serve_speed_djoko %>%
   summarise(mean_serve_speed = round(mean(as.numeric(Serve_Speed))),
             .groups = "drop")
 
-control_row <- data.frame(
+control_row <- data.frame( # used in court calibration 
   X = c(-5.48, -4.11, 0, 4.11, 5.48, 0),
   Y = c(-11.88, -11.88, -11.88, -11.88, -11.88, 0),
   Player = c("Player2", "Player2", "Player2", "Player2", "Player2", "Player2"),
@@ -116,6 +116,9 @@ strikepoint_nadal_avg <- strikepoint_nadal %>%
   count(section) %>% 
   mutate(percentage = n / sum(n)*100)
 
+strikeside_nadal_count <- table(strikepoint_nadal$Shot_Side)
+  
+
 strikepoint_djokovic <- data %>% 
   filter(Player == "Player1" & Stroke_Number > 2 & abs(Y)>7.5 & !(Shot_Type %in% c("1st Serve", "2nd Serve"))) %>%
   select(Player, X, Y, Outcome, Shot_Type, Shot_Side) %>% 
@@ -125,6 +128,8 @@ strikepoint_djokovic_avg <- strikepoint_djokovic %>%
   mutate(section = cut(X, breaks = divisions)) %>% 
   count(section) %>% 
   mutate(percentage = n / sum(n)*100)
+
+strikeside_djokovic_count <- table(strikepoint_djokovic$Shot_Side)
 
 strikepoint_djokovic_avg$Color_Code <- ifelse(
   strikepoint_djokovic_avg$percentage >= 35, "#000000",  # Red color for values >= 80%
@@ -503,6 +508,9 @@ grid.arrange(pp1, pp2, ncol = 2, bottom = text_grob(
 <div class = "row">
 <div class = "column">
 ```{r strikepoint Nadal, eval=TRUE, warning=FALSE, cache=TRUE}
+
+label_bottom = c(paste0(c("Backhand", "Forehand"), " (", strikeside_nadal_count, ")"))
+
 strikeplot = ggplot(strikepoint_nadal, aes(x = X, y = -abs(Y)))+
   geom_point(
     aes(colour = Shot_Side)
@@ -527,7 +535,7 @@ strikeplot = ggplot(strikepoint_nadal, aes(x = X, y = -abs(Y)))+
     aes(x = divisions2 + 1.5, y = -5, label=paste0(round(percentage, 1), "%")), size = 5.5, colour = strikepoint_nadal_avg$Color_Code
   )+
   scale_color_identity()+
-  scale_color_manual(values = c("FH" = "#1D4285AA", "BH" = "#942818AA"), labels = c("Backhand", "Forehand"))+
+  scale_color_manual(values = c("FH" = "#1D4285AA", "BH" = "#942818AA"), labels = label_bottom)+
   ggtitle("Nadal") +
   theme(plot.title = element_text(hjust = .5,
                                   vjust = -20,
@@ -543,6 +551,9 @@ ggdraw()+
 </div>
 <div class = "column">
 ```{r strikepoint Djokovic, eval=TRUE, warning=FALSE, cache=TRUE}
+
+label_bottom = c(paste0(c("Backhand", "Forehand"), " (", strikeside_djokovic_count, ")"))
+
 strikeplot = ggplot(strikepoint_djokovic, aes(x = X, y = -abs(Y)))+
   geom_point(
     aes(colour = Shot_Side)
@@ -567,7 +578,7 @@ strikeplot = ggplot(strikepoint_djokovic, aes(x = X, y = -abs(Y)))+
     aes(x = divisions2 + 1.5, y = -5, label=paste0(round(percentage, 1), "%")), size = 5.5, colour = strikepoint_djokovic_avg$Color_Code
   )+
   scale_color_identity()+
-  scale_color_manual(values = c("FH" = "#1D4285AA", "BH" = "#942818AA"), labels = c("Backhand", "Forehand"))+
+  scale_color_manual(values = c("FH" = "#1D4285AA", "BH" = "#942818AA"), labels = label_bottom)+
   ggtitle("Djokovic") +
   theme(plot.title = element_text(hjust = .5,
                                   vjust = -20,
