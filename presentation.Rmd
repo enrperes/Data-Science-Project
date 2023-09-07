@@ -200,7 +200,7 @@ nadal_forehand <- data %>%
                                                                                          "Drop-volley", 
                                                                                          "Overhead",
                                                                                          "Lob Volley"))) %>% 
-  select(X, Y, X2, Y2, Outcome, Shot_Type, Point_Winner, Shot_Side) %>% 
+  select(X, Y, X2, Y2, Outcome, Shot_Type, Point_Winner, Shot_Side, Set, Player1_Game, Player2_Game, Player1_Score, Player2_Score) %>% 
   mutate(X = ifelse(Y > 0, -X, X),
          X2 = ifelse(Y2 > 0, -X2, X2)) %>% 
   filter(X>0)
@@ -760,7 +760,7 @@ ggdraw()+
 
 ## Nadal inside in & out forehand groundstrokes
 
-```{r Nadal Forehand, eval=TRUE, fig.height=5, fig.width=10, fig.align='left', cache=TRUE}
+```{r Nadal Forehand, eval=TRUE, fig.align='left', fig.height=5, fig.width=10, cache=TRUE}
 
  nadal_forehand_plot <- ggplot(nadal_forehand)+
     geom_segment(aes(x = -abs(Y),
