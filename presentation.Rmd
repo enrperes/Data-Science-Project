@@ -258,6 +258,20 @@ np_count <- table(nadal_pressure$Outcome)
 np_count_all <- table(nadal_pressure_all$Outcome)
 In_Play_np = np_count_all["In-Play"]
   
+
+# Stats ----
+
+djoko_points <- data %>% 
+  filter(Point_Winner == 1) %>% 
+  select(Outcome, Point_Winner)
+
+djoko_tot_count <- table(djoko_points$Outcome)
+
+nadal_points <- data %>% 
+  filter(Point_Winner == 2) %>% 
+  select(Outcome, Point_Winner)
+
+nadal_tot_count <- table(nadal_points$Outcome)
 ```
 
 
@@ -983,7 +997,7 @@ ggdraw()+
 <span class = "slidetext"> Set points, Break points, Deuce points </span>
 <div class = "row">
 <div class = "column">
-```{r pressure Nadal, eval=TRUE}
+```{r Nadal pressure, eval=TRUE}
 
 nadal_pressure_data <- data.frame(Outcome = names(np_count), Count = as.numeric(np_count)) 
 
@@ -994,7 +1008,6 @@ ggplot(nadal_pressure_data, aes(x = Outcome, y = Count, fill= Outcome))+
   ylim(0,20)+
   geom_text(aes(label = np_count), vjust = 2.5, position = position_dodge(), size = 3.5)+
   scale_fill_manual(values = c(
-        "In-Play" = "#AAAAAABB",
         "Unforced-Error" = "#DB2F18A0",
         "Forced-Error" = "#FF8C0088",
         "Winner" = "#239CCCAA"), 
@@ -1013,7 +1026,7 @@ theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", siz
 ```
 </div>
 <div class = "column">
-```{r pressure Djokovic, eval=TRUE}
+```{r Djokovic pressure, eval=TRUE}
 
 djoko_pressure_data <- data.frame(Outcome = names(dp_count), Count = as.numeric(dp_count)) 
 
@@ -1025,7 +1038,6 @@ ggplot(djoko_pressure_data, aes(x = Outcome, y = Count, fill= Outcome))+
   geom_text(aes(label = dp_count), vjust =2.5, position = position_dodge(0.9), size = 3.5)+
   # geom_text("hello")+
   scale_fill_manual(values = c(
-        "In-Play" = "#AAAAAABB",
         "Unforced-Error" = "#DB2F18A0",
         "Forced-Error" = "#FF8C0088",
         "Winner" = "#239CCCAA"), 
@@ -1045,21 +1057,74 @@ theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", siz
 </div>
 
 
+## Points
 
 
+<div class = "row">
+<div class = "column">
+```{r Nadal stats}
+ 
+nadal_tot_data <- data.frame(Outcome = names(nadal_tot_count), Count = as.numeric(nadal_tot_count))
 
+ggplot(nadal_tot_data, aes(x = Outcome, y = Count, fill = Outcome))+
+  geom_bar(stat = "identity", position = position_dodge())+
+  geom_text(aes(label = nadal_tot_count), vjust =1.6, position = position_dodge(0.9), size = 3.5)+
+  ylim(0, 60)+
+  # geom_text("hello")+
+  scale_fill_manual(values = c(
+        "Unforced-Error" = "#DB2F18A0",
+        "Forced-Error" = "#FF8C0088",
+        "Winner" = "#239CCCAA"), 
+         guide = "none",
+         labels = paste0(nadal_tot_count, "  (", nadal_tot_count, ")"))+
+      labs(title = "Nadal", subtitle = "Points obtained by:", 
+       x = NULL,
+       y = "Count")+
+  coord_cartesian(clip = "off")+
+  theme_minimal()+
+  annotate("text", x = 2.5, y = 0, vjust = 5.5, label = paste("Total points won:", count(nadal_points)))+
+theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", size = 16), plot.margin = unit(c(0.1, 0.1, 0.4, 0.1), "inches"))
 
+```
+</div>
+<div class = "column">
+```{r Djokovic stats}
+ 
+djoko_tot_data <- data.frame(Outcome = names(djoko_tot_count), Count = as.numeric(djoko_tot_count))
 
+ggplot(djoko_tot_data, aes(x = Outcome, y = Count, fill = Outcome))+
+  geom_bar(stat = "identity", position = position_dodge())+
+  geom_text(aes(label = djoko_tot_count), vjust =1.6, position = position_dodge(0.9), size = 3.5)+
+  ylim(0, 60)+
+  # geom_text("hello")+
+  scale_fill_manual(values = c(
+        "Unforced-Error" = "#DB2F18A0",
+        "Forced-Error" = "#FF8C0088",
+        "Winner" = "#239CCCAA"), 
+         guide = "none",
+         labels = paste0(djoko_tot_count, "  (", djoko_tot_count, ")"))+
+      labs(title = "Djokovic", subtitle = "Points obtained by:", 
+       x = NULL,
+       y = NULL)+
+  coord_cartesian(clip = "off")+
+  theme_minimal()+
+  annotate("text", x = 2.5, y = 0, vjust = 5.5, label = paste("Total points won:", count(djoko_points)))+
+theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", size = 16), plot.margin = unit(c(0.1, 0.1, 0.4, 0.1), "inches"))
 
+```
+</div>
+</div>
 
+## Conclusioni 
 
-
-
-
-
-
-
-
+<div class ="row">
+<div class = "column">
+Nadal è riuscito a vincere mantenendo un livello altissimo durante tutta la partita, concedendo appena 25 errori non forzati su un totale di quasi 900 copi giocati. Ha saputo sfruttare le "debolezze" di Djokovic e annullare i suoi tentativi di attacco. Tutto questo con un piede dolorante, che qualche settimana prima l'aveva portato a temere per la fine della sua carriera. 
+</div>
+<div class = "column">
+![](nadal_winning.png)
+</div>
+</div>
 
 
 
