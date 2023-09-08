@@ -29,4 +29,10 @@ slides>slide.title-slide {
   top: -35px;
   
 }
-  
+
+.conclusioni{
+  width: 610px;
+  align-self: left;
+  text-align: justify;
+  text-justify: inter-word;
+}

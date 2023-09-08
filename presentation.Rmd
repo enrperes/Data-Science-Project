@@ -9,7 +9,7 @@ output:
     css: style.css
   slidy_presentation: default
   beamer_presentation: default
-subtitle: Roland Garros 2022
+subtitle: Tennis Grand Slam - Roland Garros 2022
 ---
 
 ```{r setup, include=FALSE}
@@ -277,7 +277,7 @@ nadal_tot_count <- table(nadal_points$Outcome)
 
 ## L'incontro
 
-Il **59°** incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di **6-2, 4-6,  6-2,  7-6(4)**. Tra i dolori al piede, le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in grande forma è ancora più spettacolare.  
+Il **59°** incontro tra i due, che vede Djokovic in vantaggio per 30 a 28, durerà più di 4 ore, vedendo vincente lo spagnolo con il punteggio di **6-2, 4-6,  6-2,  7-6(4)**. Considerati i dolori al piede e le condizioni atmosferiche con umidità e freddo sfavorevoli al suo gioco carico di rotazioni, la vittoria di Nadal contro un Djokovic in grande forma è ancora più spettacolare.  
 
 - Come ha fatto Nadal a vincere questa partita?
 - Quali sono state le strategie vincenti? 
@@ -1115,17 +1115,13 @@ theme(plot.title = element_text(family = "mono", hjust = 0.5, face = "bold", siz
 </div>
 </div>
 
-## Conclusioni 
+## Conclusioni {data-background=nadal_winning.png data-background-size=cover}
+<div class = "conclusioni">
 
-<div class ="row">
-<div class = "column">
-Nadal è riuscito a vincere mantenendo un livello altissimo durante tutta la partita, concedendo appena 25 errori non forzati su un totale di quasi 900 copi giocati. Ha saputo sfruttare le "debolezze" di Djokovic e annullare i suoi tentativi di attacco. Tutto questo con un piede dolorante, che qualche settimana prima l'aveva portato a temere per la fine della sua carriera. 
-</div>
-<div class = "column">
-![](nadal_winning.png)
-</div>
-</div>
+Nadal è riuscito a vincere mantenendo un livello altissimo durante tutta la partita, concedendo appena 25 errori non forzati su un totale di quasi 900 colpi giocati. Ha saputo sfruttare le "debolezze" di Djokovic e annullare i suoi tentativi di attacco. Tutto questo con un piede dolorante, che qualche settimana prima l'aveva portato a temere per la fine della sua carriera. 
+In semifinale batterà Zverev e in finale Ruud, senza perdere un set, conquistando il suo **quattordicesimo** Roland Garros. 
 
+</div>
 
 
 
