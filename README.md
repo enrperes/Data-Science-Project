@@ -1,4 +1,4 @@
-# Roland Garros 2022: Novak Djokovic vs Rafael Nadal match analysis
+# Roland Garros 2022: _Novak Djokovic_ vs _Rafael Nadal_ match analysis
 ### See the presentation [here](presentation.html)
 
 ![Cover image](/cover.jpg)
@@ -6,8 +6,8 @@
 ## Description
 
 This project aims to analyze the match between Novak Djokovic and Rafael Nadal at Roland Garros 2022.
-Nadal defeated Djokovic in 4 sets, 6-2 4-6 6-2 7-6(4).
-How did Nadal manage to win the match? What were the key strategies?
+Nadal defeated Djokovic in 4 sets, **6-2 4-6 6-2 7-6(4)**.
+How did Nadal **manage to win** the match? What were the **key strategies**?
 Nadal's forehand dominance, Djokovic's backhand deficiency, baseline strategy, 2nd serve edge and more will be analyzed in this project.
 
 ## Files
